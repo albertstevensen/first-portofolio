@@ -221,20 +221,53 @@ gobuster dir -u http://127.0.0.1:3000 -w /usr/share/wordlists/dirb/common.txt --
 
 ## Analisis
 
-Endpoint yang ditemukan menunjukkan bahwa aplikasi memiliki:
+Hasil enumeration menunjukkan beberapa endpoint menarik yang dapat menjadi attack surface untuk pengujian lanjutan.
 
-* REST API endpoint
-* Administrative functionality
-* Public file access
-* Backend communication endpoint
+Endpoint `/ftp` menghasilkan status `200 OK` dengan ukuran response `11316`, yang menunjukkan bahwa endpoint tersebut dapat diakses secara langsung. Endpoint seperti ini penting untuk dianalisis karena berpotensi berisi file publik, file konfigurasi, dokumen internal, atau informasi lain yang dapat mendukung tahap reconnaissance lanjutan.
 
-Endpoint `/administration` menjadi target utama karena berpotensi memberikan akses terhadap privileged functionality.
+Endpoint `/robots.txt` juga dapat diakses dengan status `200 OK`. File `robots.txt` sering digunakan untuk memberikan instruksi kepada search engine crawler mengenai path yang boleh atau tidak boleh diindeks. Dalam penetration testing, file ini penting karena terkadang mengungkap directory atau endpoint yang sensitif.
 
-Sedangkan endpoint `/ftp` meningkatkan risiko:
+Endpoint `/assets` dan `/media` menghasilkan status `301`, yang berarti terdapat redirection ke `/assets/` dan `/media/`. Hal ini menunjukkan keberadaan static content directory yang kemungkinan berisi file JavaScript, CSS, image, atau media lain. Static files dapat membantu attacker memahami struktur aplikasi, route frontend, dan endpoint API yang digunakan oleh aplikasi.
 
-* Information disclosure
-* Public file exposure
-* Sensitive file leakage
+Beberapa endpoint seperti `/api`, `/rest`, `/profile`, `/redirect`, `/restaurants`, `/restore`, `/restricted`, dan endpoint lain menghasilkan status `500 Internal Server Error`. Status ini menunjukkan bahwa request yang dikirim ke endpoint tersebut mencapai backend, tetapi aplikasi tidak dapat memproses request dengan benar. Dari perspektif security testing, response `500` tetap penting karena menunjukkan bahwa path tersebut kemungkinan valid atau terhubung dengan backend logic.
+
+Endpoint `/api` dan `/rest` menjadi prioritas tinggi untuk pengujian lanjutan karena menunjukkan keberadaan API endpoint. API endpoint merupakan attack surface penting pada aplikasi modern karena dapat digunakan untuk menguji authorization, session handling, parameter manipulation, dan information disclosure.
+
+Endpoint `/restricted` juga menjadi menarik karena secara penamaan mengindikasikan adanya resource yang seharusnya dibatasi. Endpoint seperti ini perlu diuji lebih lanjut untuk memastikan apakah access control sudah diterapkan dengan benar.
+
+Endpoint `/redirect` menghasilkan status `500`, sehingga perlu dianalisis lebih lanjut karena path dengan nama seperti ini berpotensi berkaitan dengan redirect handling. Pada aplikasi nyata, redirect functionality yang tidak divalidasi dengan baik dapat berisiko menjadi open redirect.
+
+Endpoint `/video` dan `/Video` sama-sama menghasilkan status `200 OK` dengan ukuran response besar. Perbedaan kapitalisasi menunjukkan bahwa aplikasi atau server dapat merespons path dengan variasi case tertentu. Hal ini dapat dicatat sebagai bagian dari endpoint behavior analysis.
+
+Secara keseluruhan, hasil Gobuster menunjukkan bahwa aplikasi memiliki beberapa attack surface utama, yaitu public file access, API endpoint, static content directory, redirect-related endpoint, dan restricted path. Temuan ini menjadi dasar untuk tahap pengujian berikutnya, yaitu API testing, access control testing, sensitive file review, dan post-exploitation analysis pada level aplikasi.
+
+### Key Findings
+
+| Endpoint | Status | Security Relevance |
+|---|---:|---|
+| `/ftp` | 200 | Public file access, potential information disclosure |
+| `/robots.txt` | 200 | Potential disclosure of hidden or disallowed paths |
+| `/assets` | 301 | Static files, possible JavaScript route/API discovery |
+| `/media` | 301 | Static media directory |
+| `/api` | 500 | Potential backend/API endpoint |
+| `/rest` | 500 | REST API attack surface |
+| `/profile` | 500 | Potential user-related functionality |
+| `/redirect` | 500 | Potential redirect handling endpoint |
+| `/restricted` | 500 | Potential access control testing target |
+| `/video` / `/Video` | 200 | Public media/resource endpoint |
+
+### Security Impact
+
+Directory enumeration berhasil mengidentifikasi beberapa endpoint yang dapat memperluas attack surface aplikasi. Endpoint yang dapat diakses secara langsung maupun endpoint yang menghasilkan error dari backend dapat memberikan petunjuk penting mengenai struktur aplikasi, API behavior, dan area yang perlu diuji lebih lanjut.
+
+Potensi risiko yang muncul dari hasil enumeration ini meliputi:
+
+- Information disclosure melalui public endpoint.
+- API exposure melalui `/api` dan `/rest`.
+- Access control weakness pada endpoint seperti `/restricted` atau `/profile`.
+- Static file exposure melalui `/assets` dan `/media`.
+- Potential redirect issue pada `/redirect`.
+- Backend error exposure melalui response `500`.
 
 ---
 
