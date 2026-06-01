@@ -37,15 +37,11 @@ Project ini dilakukan pada environment lab terisolasi menggunakan OWASP Juice Sh
 
 ---
 
-# Repository Structure
-
 # Repository Structure
 
-```text
+```bash
 cybersecurity-portfolio/
-│
 ├── README.md
-│
 ├── evidence/
 │   ├── 01-docker-running.png
 │   ├── 02-juice-shop-homepage.png
@@ -59,14 +55,12 @@ cybersecurity-portfolio/
 │   ├── 10-api-testing.png
 │   ├── 11-access-control-testing.png
 │   └── 12-privilege-escalation-testing.png
-│
 ├── logs/
 │   ├── nmap.txt
 │   ├── gobuster.txt
 │   ├── whatweb.txt
 │   ├── curl-header.txt
 │   └── api-testing.txt
-│
 └── appendix/
     ├── mitre-mapping.md
     ├── owasp-mapping.md
