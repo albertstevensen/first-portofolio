@@ -476,12 +476,6 @@ Post-Exploitation Analysis
 
 # Vulnerability Assessment
 
-# Broken Access Control
-
-## OWASP Mapping
-
-# Vulnerability Assessment
-
 | Vulnerability | Severity | OWASP Mapping | Endpoint / Area | Description | Potential Impact |
 |---|---|---|---|---|---|
 | Broken Access Control | High | A01 Broken Access Control | `/restricted`, `/administration`, `/profile` | Authorization validation berpotensi tidak diterapkan secara konsisten pada backend sehingga memungkinkan unauthorized functionality access. | Privilege escalation, unauthorized admin access, data manipulation |
