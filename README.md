@@ -267,22 +267,34 @@ Privilege escalation testing dilakukan menggunakan akun privilege rendah untuk m
 
 ---
 
-# Visual Attack Surface
-
-External User
-      |
-      v
-Browser / Burp Suite
-      |
-      v
-OWASP Juice Shop
-      |
-------------------------------------------------
-|               |               |              |
-v               v               v              v
-
-Authentication   REST API    Admin Endpoint   File Endpoint
-& Session        /api        /administration  /ftp
+# Visual Attack Surface
+
+```text
+                    +----------------------+
+                    |     External User    |
+                    |      / Attacker      |
+                    +----------+-----------+
+                               |
+                               v
+                  +-------------------------+
+                  | Browser / Burp Suite    |
+                  +-----------+-------------+
+                              |
+                              v
+                  +-------------------------+
+                  | OWASP Juice Shop        |
+                  | Docker Container        |
+                  +-----------+-------------+
+                              |
+        -------------------------------------------------
+        |               |               |               |
+        v               v               v               v
+
++---------------+ +---------------+ +---------------+ +----------------+
+| Authentication| | REST API      | | Admin Endpoint| | File Endpoint  |
+| & Session     | | /api /rest    | | /administration| | /ftp           |
++---------------+ +---------------+ +---------------+ +----------------+
+```
 
 ---
 
