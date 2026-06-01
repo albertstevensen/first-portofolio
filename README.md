@@ -39,36 +39,39 @@ Project ini dilakukan pada environment lab terisolasi menggunakan OWASP Juice Sh
 
 # Repository Structure
 
-cybersecurity-portfolio/
-├── README.md
-│
-├── evidence/
-│   ├── 01-docker-running.png
-│   ├── 02-juice-shop-homepage.png
-│   ├── 03-nmap-scan.png
-│   ├── 04-whatweb-result.png
-│   ├── 05-gobuster-result.png
-│   ├── 06-login-page.png
-│   ├── 07-login-request.png
-│   ├── 08-login-response.png
-│   ├── 09-session-storage.png
-│   ├── 10-api-testing.png
-│   ├── 11-access-control-testing.png
-│   └── 12-privilege-escalation-testing.png
-│
-├── logs/
-│   ├── nmap.txt
-│   ├── gobuster.txt
-│   ├── whatweb.txt
-│   ├── curl-header.txt
-│   └── api-testing.txt
-│
-└── appendix/
-    ├── mitre-mapping.md
-    ├── owasp-mapping.md
-    ├── attack-storyline.md
+# Repository Structure
+
+cybersecurity-portfolio/
+│
+├── README.md
+│
+├── evidence/
+│   ├── 01-docker-running.png
+│   ├── 02-juice-shop-homepage.png
+│   ├── 03-nmap-scan.png
+│   ├── 04-whatweb-result.png
+│   ├── 05-gobuster-result.png
+│   ├── 06-login-page.png
+│   ├── 07-login-request.png
+│   ├── 08-login-response.png
+│   ├── 09-session-storage.png
+│   ├── 10-api-testing.png
+│   ├── 11-access-control-testing.png
+│   └── 12-privilege-escalation-testing.png
+│
+├── logs/
+│   ├── nmap.txt
+│   ├── gobuster.txt
+│   ├── whatweb.txt
+│   ├── curl-header.txt
+│   └── api-testing.txt
+│
+└── appendix/
+    ├── mitre-mapping.md
+    ├── owasp-mapping.md
+    ├── attack-storyline.md
     └── attack-surface-analysis.md
-
+    
 ---
 
 # Environment Setup
