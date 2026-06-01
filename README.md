@@ -1,4 +1,3 @@
-# Cybersecurity First Portofolio
 # Portofolio Penetration Testing — OWASP Juice Shop
 
 Web Application Penetration Testing Lab menggunakan Kali Linux, Docker, metodologi OWASP Top 10, dan MITRE ATT&CK Mapping.
@@ -13,404 +12,291 @@ Project ini dilakukan pada environment lab terisolasi menggunakan OWASP Juice Sh
 
 # Informasi Project
 
-| Informasi        | Detail                                                |
-| ---------------- | ----------------------------------------------------- |
-| Project          | OWASP Juice Shop Security Assessment                  |
-| Tester           | Albert Stevensen                                      |
-| Environment      | Kali Linux + Docker                                   |
-| Jenis Assessment | Web Application Penetration Testing                   |
-| Metodologi       | OWASP Top 10 & MITRE ATT&CK                           |
-| Tools            | Nmap, WhatWeb, Gobuster, Burp Suite, Browser DevTools |
-| Scope            | Local Dockerized Lab Environment                      |
+| Informasi | Detail |
+|---|---|
+| Project | OWASP Juice Shop Security Assessment |
+| Tester | Albert Stevensen |
+| Environment | Kali Linux + Docker |
+| Jenis Assessment | Web Application Penetration Testing |
+| Metodologi | OWASP Top 10 & MITRE ATT&CK |
+| Tools | Nmap, WhatWeb, Gobuster, Burp Suite, Browser DevTools |
+| Scope | Local Dockerized Lab Environment |
 
 ---
 
 # Objectives
 
-* Melakukan reconnaissance dan service enumeration terhadap aplikasi web.
-* Mengidentifikasi attack surface dan hidden endpoint.
-* Menganalisis REST API dan session handling.
-* Melakukan access control testing dan privilege escalation pada level aplikasi.
-* Mendokumentasikan hasil pengujian menggunakan OWASP Top 10 dan MITRE ATT&CK.
-* Membuat portofolio penetration testing dengan format professional reporting.
+| No | Objective |
+|---|---|
+| 1 | Melakukan reconnaissance dan service enumeration terhadap aplikasi web |
+| 2 | Mengidentifikasi attack surface dan hidden endpoint |
+| 3 | Menganalisis REST API dan session handling |
+| 4 | Melakukan access control testing dan privilege escalation pada level aplikasi |
+| 5 | Mendokumentasikan hasil pengujian menggunakan OWASP Top 10 dan MITRE ATT&CK |
+| 6 | Membuat portofolio penetration testing dengan format professional reporting |
+
+---
+
+# Repository Structure
+
+```text
+cybersecurity-portfolio/
+├── README.md
+│
+├── evidence/
+│   ├── 01-docker-running.png
+│   ├── 02-juice-shop-homepage.png
+│   ├── 03-nmap-scan.png
+│   ├── 04-whatweb-result.png
+│   ├── 05-gobuster-result.png
+│   ├── 06-login-page.png
+│   ├── 07-login-request.png
+│   ├── 08-login-response.png
+│   ├── 09-session-storage.png
+│   ├── 10-api-testing.png
+│   ├── 11-access-control-testing.png
+│   └── 12-privilege-escalation-testing.png
+│
+├── logs/
+│   ├── nmap.txt
+│   ├── gobuster.txt
+│   ├── whatweb.txt
+│   ├── curl-header.txt
+│   └── api-testing.txt
+│
+└── appendix/
+    ├── mitre-mapping.md
+    ├── owasp-mapping.md
+    ├── attack-storyline.md
+    └── attack-surface-analysis.md
+```
 
 ---
 
 # Environment Setup
 
-## Install Docker
-
-```bash id="7l7zqy"
-sudo apt update
-sudo apt install docker.io -y
-```
-
-## Menjalankan Docker Service
-
-```bash id="i8plr0"
-sudo systemctl enable docker
-sudo systemctl start docker
-```
-
-## Pull Docker Image OWASP Juice Shop
-
-```bash id="p4t2zk"
-sudo docker pull bkimminich/juice-shop
-```
-
-## Menjalankan Container
-
-```bash id="bn74pw"
-sudo docker run -d -p 3000:3000 --name juice-shop bkimminich/juice-shop
-```
-
-## Verifikasi Container
-
-```bash id="vnhs0s"
-docker ps
-```
-
-## Hasil
-
-Container berhasil berjalan pada:
-
-```text id="3o2jtw"
-0.0.0.0:3000
-```
-
-Aplikasi dapat diakses melalui:
-
-```text id="rxqnj9"
-http://127.0.0.1:3000
-```
+| Step | Activity | Command |
+|---|---|---|
+| 1 | Install Docker | `sudo apt update && sudo apt install docker.io -y` |
+| 2 | Menjalankan Docker Service | `sudo systemctl enable docker && sudo systemctl start docker` |
+| 3 | Pull Docker Image | `sudo docker pull bkimminich/juice-shop` |
+| 4 | Menjalankan Container | `sudo docker run -d -p 3000:3000 --name juice-shop bkimminich/juice-shop` |
+| 5 | Verifikasi Container | `docker ps` |
 
 ---
 
-# Evidence Environment Setup
+# Environment Result
 
-## Docker Container Running
+| Item | Result |
+|---|---|
+| Running Port | `0.0.0.0:3000` |
+| Application URL | `http://127.0.0.1:3000` |
+| Status | Running Successfully |
 
-![Docker Running](evidence/01-docker-running.png)
+---
 
-## Juice Shop Homepage
+# Environment Evidence
 
-![Juice Shop Homepage](evidence/02-juice-shop-homepage.png)
+| Evidence | Screenshot |
+|---|---|
+| Docker Container Running | ![Docker Running](evidence/01-docker-running.png) |
+| Juice Shop Homepage | ![Juice Shop Homepage](evidence/02-juice-shop-homepage.png) |
 
 ---
 
 # Reconnaissance & Enumeration
 
-# Host Identification
+## Host Identification
 
-Reconnaissance dimulai dengan identifikasi host environment untuk memastikan target dapat dijangkau.
+| Item | Detail |
+|---|---|
+| Objective | Mengidentifikasi host environment |
+| Command | `ip a` |
+| Analysis | Host Kali Linux menggunakan interface aktif yang memungkinkan komunikasi dengan Docker container lokal |
 
-## Command
+---
 
-```bash id="m6g0ob"
-ip a
+## Service Enumeration
+
+| Item | Detail |
+|---|---|
+| Objective | Mengidentifikasi service yang berjalan pada target |
+| Command | `nmap -sV -p 3000 127.0.0.1` |
+| Result | `3000/tcp open http` |
+| Evidence | ![Nmap Scan](evidence/03-nmap-scan.png) |
+| Analysis | Port 3000 ditemukan dalam keadaan terbuka dan menjalankan service HTTP sehingga menjadi entry point utama untuk enumeration dan attack surface analysis |
+
+---
+
+## Web Fingerprinting
+
+| Item | Detail |
+|---|---|
+| Objective | Mengidentifikasi teknologi web dan security header |
+| Command | `whatweb http://127.0.0.1:3000` |
+| Evidence | ![WhatWeb Result](evidence/04-whatweb-result.png) |
+
+### Result
+
+```text
+http://127.0.0.1:3000 [200 OK] Country[RESERVED][ZZ], HTML5, IP[127.0.0.1], Script[module], Title[OWASP Juice Shop], UncommonHeaders[access-control-allow-origin,x-content-type-options,feature-policy,x-recruiting], X-Frame-Options[SAMEORIGIN]
 ```
 
-## Analisis
+### Analysis
 
-Host Kali Linux menggunakan interface aktif yang memungkinkan komunikasi dengan Docker container lokal.
+| Finding | Analysis |
+|---|---|
+| HTML5 & Script[module] | Menunjukkan aplikasi menggunakan modern JavaScript-based architecture dan kemungkinan SPA |
+| X-Frame-Options | Membantu mengurangi risiko clickjacking |
+| X-Content-Type-Options | Membantu mencegah MIME sniffing |
+| Feature-Policy | Membatasi fitur browser tertentu |
+| access-control-allow-origin | Menunjukkan penggunaan CORS yang perlu dianalisis lebih lanjut |
+| SPA Behavior | Invalid route tetap menghasilkan `HTTP 200 OK` sehingga enumeration membutuhkan filtering response length |
 
 ---
 
-# Service Enumeration
+## HTTP Header Enumeration
 
-Service enumeration dilakukan menggunakan Nmap untuk mengidentifikasi service yang berjalan pada target.
+| Item | Detail |
+|---|---|
+| Command | `curl -I http://127.0.0.1:3000` |
+| Objective | Menganalisis HTTP response header |
+| Analysis | Header digunakan untuk mengidentifikasi server behavior, security header, backend response, dan kemungkinan information disclosure |
 
-## Command
+---
 
-```bash id="8tzyj4"
-nmap -sV -p 3000 127.0.0.1
+## Directory & Endpoint Enumeration
+
+| Item | Detail |
+|---|---|
+| Tool | Gobuster |
+| Objective | Mengidentifikasi hidden endpoint dan public attack surface |
+
+### Initial Command
+
+```bash
+gobuster dir -u http://127.0.0.1:3000 -w /usr/share/wordlists/dirb/common.txt
 ```
 
-## Hasil
+### Initial Result
 
-```text id="2v98jg"
-3000/tcp open http
+```text
+the server returns a status code that matches the provided options for non existing urls
 ```
 
-## Analisis
+### Revised Command
 
-Port 3000 ditemukan dalam keadaan terbuka dan menjalankan service HTTP. Informasi ini menjadi entry point utama untuk proses enumeration dan attack surface analysis.
-
-Scanning service merupakan tahapan penting karena attacker umumnya menggunakan hasil scanning untuk menentukan teknik eksploitasi yang sesuai terhadap target.
-
----
-
-# Evidence Nmap Scan
-
-![Nmap Scan](evidence/03-nmap-scan.png)
-
----
-
-# Web Fingerprinting
-
-Fingerprinting dilakukan menggunakan WhatWeb untuk mengidentifikasi teknologi web yang digunakan aplikasi.
-
-## Command
-
-```bash id="iv5wdn"
-whatweb http://127.0.0.1:3000
-```
-
-## Analisis
-
-Hasil fingerprinting mengonfirmasi bahwa target merupakan aplikasi OWASP Juice Shop yang berjalan pada localhost `127.0.0.1:3000`.
-
-Deteksi `HTML5` dan `Script[module]` menunjukkan bahwa aplikasi menggunakan modern JavaScript-based architecture dan kemungkinan merupakan Single Page Application (SPA). Karakteristik SPA menyebabkan seluruh invalid route tetap menghasilkan `HTTP 200 OK`, sehingga proses enumeration seperti Gobuster membutuhkan filtering response length untuk mengurangi false positive.
-
-Selain itu ditemukan beberapa security header seperti:
-- `X-Frame-Options[SAMEORIGIN]` untuk membantu mengurangi risiko clickjacking.
-- `X-Content-Type-Options` untuk membantu mencegah MIME sniffing.
-- `Feature-Policy` untuk membatasi fitur browser tertentu.
-
-Header `access-control-allow-origin` juga menunjukkan penggunaan mekanisme CORS yang perlu diperhatikan lebih lanjut pada tahap API testing karena konfigurasi yang terlalu permisif dapat meningkatkan risiko unauthorized cross-origin access.
-
-Secara keseluruhan, fingerprinting menunjukkan bahwa target merupakan modern web application dengan attack surface utama pada REST API, frontend routing, session handling, dan authorization mechanism.
-
----
-
-# Evidence WhatWeb
-
-![WhatWeb Result](evidence/04-whatweb-result.png)
-
----
-
-# HTTP Header Enumeration
-
-## Command
-
-```bash id="9fgw3w"
-curl -I http://127.0.0.1:3000
-```
-
-## Analisis
-
-HTTP response header dianalisis untuk mengidentifikasi:
-
-* Server behavior
-* Security header
-* Backend response
-* Informasi yang dapat membantu fingerprinting
-
-Header yang terlalu verbose dapat meningkatkan risiko information disclosure.
-
----
-
-# Directory & Endpoint Enumeration
-
-Directory enumeration dilakukan menggunakan Gobuster untuk mencari hidden endpoint dan attack surface tambahan.
-
-## Command
-
-```bash id="z4gsb2"
+```bash
 gobuster dir -u http://127.0.0.1:3000 -w /usr/share/wordlists/dirb/common.txt --exclude-length 9903
 ```
 
-## Endpoint yang Ditemukan
-
-```text id="yzm85u"
-/api
-/rest
-/ftp
-/administration
-```
-
-## Analisis
-
-Hasil enumeration menunjukkan beberapa endpoint menarik yang dapat menjadi attack surface untuk pengujian lanjutan.
-
-Endpoint `/ftp` menghasilkan status `200 OK` dengan ukuran response `11316`, yang menunjukkan bahwa endpoint tersebut dapat diakses secara langsung. Endpoint seperti ini penting untuk dianalisis karena berpotensi berisi file publik, file konfigurasi, dokumen internal, atau informasi lain yang dapat mendukung tahap reconnaissance lanjutan.
-
-Endpoint `/robots.txt` juga dapat diakses dengan status `200 OK`. File `robots.txt` sering digunakan untuk memberikan instruksi kepada search engine crawler mengenai path yang boleh atau tidak boleh diindeks. Dalam penetration testing, file ini penting karena terkadang mengungkap directory atau endpoint yang sensitif.
-
-Endpoint `/assets` dan `/media` menghasilkan status `301`, yang berarti terdapat redirection ke `/assets/` dan `/media/`. Hal ini menunjukkan keberadaan static content directory yang kemungkinan berisi file JavaScript, CSS, image, atau media lain. Static files dapat membantu attacker memahami struktur aplikasi, route frontend, dan endpoint API yang digunakan oleh aplikasi.
-
-Beberapa endpoint seperti `/api`, `/rest`, `/profile`, `/redirect`, `/restaurants`, `/restore`, `/restricted`, dan endpoint lain menghasilkan status `500 Internal Server Error`. Status ini menunjukkan bahwa request yang dikirim ke endpoint tersebut mencapai backend, tetapi aplikasi tidak dapat memproses request dengan benar. Dari perspektif security testing, response `500` tetap penting karena menunjukkan bahwa path tersebut kemungkinan valid atau terhubung dengan backend logic.
-
-Endpoint `/api` dan `/rest` menjadi prioritas tinggi untuk pengujian lanjutan karena menunjukkan keberadaan API endpoint. API endpoint merupakan attack surface penting pada aplikasi modern karena dapat digunakan untuk menguji authorization, session handling, parameter manipulation, dan information disclosure.
-
-Endpoint `/restricted` juga menjadi menarik karena secara penamaan mengindikasikan adanya resource yang seharusnya dibatasi. Endpoint seperti ini perlu diuji lebih lanjut untuk memastikan apakah access control sudah diterapkan dengan benar.
-
-Endpoint `/redirect` menghasilkan status `500`, sehingga perlu dianalisis lebih lanjut karena path dengan nama seperti ini berpotensi berkaitan dengan redirect handling. Pada aplikasi nyata, redirect functionality yang tidak divalidasi dengan baik dapat berisiko menjadi open redirect.
-
-Endpoint `/video` dan `/Video` sama-sama menghasilkan status `200 OK` dengan ukuran response besar. Perbedaan kapitalisasi menunjukkan bahwa aplikasi atau server dapat merespons path dengan variasi case tertentu. Hal ini dapat dicatat sebagai bagian dari endpoint behavior analysis.
-
-Secara keseluruhan, hasil Gobuster menunjukkan bahwa aplikasi memiliki beberapa attack surface utama, yaitu public file access, API endpoint, static content directory, redirect-related endpoint, dan restricted path. Temuan ini menjadi dasar untuk tahap pengujian berikutnya, yaitu API testing, access control testing, sensitive file review, dan post-exploitation analysis pada level aplikasi.
-
-### Key Findings
-
-| Endpoint | Status | Security Relevance |
-|---|---:|---|
-| `/ftp` | 200 | Public file access, potential information disclosure |
-| `/robots.txt` | 200 | Potential disclosure of hidden or disallowed paths |
-| `/assets` | 301 | Static files, possible JavaScript route/API discovery |
-| `/media` | 301 | Static media directory |
-| `/api` | 500 | Potential backend/API endpoint |
-| `/rest` | 500 | REST API attack surface |
-| `/profile` | 500 | Potential user-related functionality |
-| `/redirect` | 500 | Potential redirect handling endpoint |
-| `/restricted` | 500 | Potential access control testing target |
-| `/video` / `/Video` | 200 | Public media/resource endpoint |
-
-### Security Impact
-
-Directory enumeration berhasil mengidentifikasi beberapa endpoint yang dapat memperluas attack surface aplikasi. Endpoint yang dapat diakses secara langsung maupun endpoint yang menghasilkan error dari backend dapat memberikan petunjuk penting mengenai struktur aplikasi, API behavior, dan area yang perlu diuji lebih lanjut.
-
-Potensi risiko yang muncul dari hasil enumeration ini meliputi:
-
-- Information disclosure melalui public endpoint.
-- API exposure melalui `/api` dan `/rest`.
-- Access control weakness pada endpoint seperti `/restricted` atau `/profile`.
-- Static file exposure melalui `/assets` dan `/media`.
-- Potential redirect issue pada `/redirect`.
-- Backend error exposure melalui response `500`.
-
----
-
-# Evidence Gobuster
+### Evidence
 
 ![Gobuster Result](evidence/05-gobuster-result.png)
 
----
+### Enumeration Result
 
-# Attack Storyline & Visual Attack Surface
+| Endpoint | Status | Security Relevance |
+|---|---|---|
+| `/ftp` | 200 | Public file access |
+| `/robots.txt` | 200 | Potential hidden path disclosure |
+| `/assets` | 301 | Static file directory |
+| `/media` | 301 | Media directory |
+| `/api` | 500 | Potential backend API endpoint |
+| `/rest` | 500 | REST API attack surface |
+| `/profile` | 500 | User-related functionality |
+| `/redirect` | 500 | Potential redirect handling |
+| `/restricted` | 500 | Potential authorization testing target |
+| `/video` | 200 | Public media endpoint |
 
-# Attack Storyline Overview
+### Analysis
 
-Attack storyline menggambarkan bagaimana seorang attacker dapat bergerak secara bertahap dari reconnaissance hingga privilege escalation menggunakan kombinasi:
-
-* Service enumeration
-* Endpoint discovery
-* API analysis
-* Authorization testing
-
-Pada assessment ini attacker diasumsikan sebagai external user tanpa privilege awal terhadap aplikasi.
-
----
-
-# Attack Flow Narrative
-
-## Phase 1 — Reconnaissance
-
-Attacker memulai assessment dengan melakukan:
-
-* Port scanning
-* Service enumeration
-* Technology fingerprinting
-
-Menggunakan:
-
-* Nmap
-* WhatWeb
-* HTTP Header Analysis
-
-Tujuan tahap ini adalah mengidentifikasi:
-
-* Service aktif
-* Teknologi web
-* Entry point aplikasi
-* Attack surface awal
+| Finding | Analysis |
+|---|---|
+| SPA Behavior | Invalid route menghasilkan `HTTP 200 OK` sehingga perlu filtering response length |
+| `/ftp` | Menunjukkan kemungkinan public file access |
+| `/api` & `/rest` | Menjadi prioritas untuk API testing |
+| `/restricted` | Menjadi target access control testing |
+| HTTP 500 Response | Menunjukkan request mencapai backend application |
 
 ---
 
-## Phase 2 — Attack Surface Discovery
+# Authentication & Session Analysis
 
-Menggunakan Gobuster, attacker berhasil menemukan beberapa endpoint penting:
+## Login Analysis
 
-```text id="vbf11w"
-/api
-/rest
-/ftp
-/administration
-```
+| Evidence | Description |
+|---|---|
+| ![Login Page](evidence/06-login-page.png) | Halaman login aplikasi |
+| ![Login Request](evidence/07-login-request.png) | Request authentication `POST /rest/user/login` |
+| ![Login Response](evidence/08-login-response.png) | Response authentication dan token |
+| ![Session Storage](evidence/09-session-storage.png) | Authentication token pada browser storage |
 
-Endpoint tersebut menunjukkan keberadaan:
+### Authentication Analysis
 
-* REST API
-* Administrative functionality
-* Public file access
-* Backend API communication
-
-Administrative endpoint kemudian menjadi high-value target untuk authorization testing.
-
----
-
-## Phase 3 — Application Analysis
-
-Attacker mulai menganalisis:
-
-* Authentication mechanism
-* Session handling
-* API communication
-* Authorization validation
-
-Menggunakan:
-
-* Browser Developer Tools
-* Burp Suite
-
-Melalui request inspection attacker dapat memahami:
-
-* Authorization token
-* Session mechanism
-* Backend response behavior
-* API request structure
+| Finding | Analysis |
+|---|---|
+| Login Endpoint | Aplikasi menggunakan REST API authentication |
+| Token-Based Authentication | Backend mengirim authentication token setelah login berhasil |
+| Session Storage | Token tersimpan pada sisi client/browser |
+| Security Risk | Weak session management dapat meningkatkan risiko session hijacking dan session replay |
 
 ---
 
-## Phase 4 — Access Control Testing
+# API Testing
 
-Setelah memahami struktur aplikasi, attacker melakukan:
+| Item | Detail |
+|---|---|
+| Evidence | ![API Testing](evidence/10-api-testing.png) |
+| Objective | Menganalisis komunikasi REST API |
 
-* Direct endpoint access
-* Authorization testing
-* API manipulation
-* Session analysis
+### API Analysis
 
-Tujuan utama tahap ini adalah mengevaluasi apakah backend melakukan authorization validation secara konsisten.
-
----
-
-## Phase 5 — Application-Level Privilege Escalation
-
-Privilege escalation pada assessment ini berfokus pada:
-
-```text id="1v6p7y"
-Regular User → Administrative Function Access
-```
-
-dan:
-
-```text id="b7f9n5"
-User A → User B Resource Access
-```
-
-Authorization weakness dapat memungkinkan attacker memperoleh akses terhadap functionality yang seharusnya hanya tersedia untuk privileged user.
+| Finding | Analysis |
+|---|---|
+| REST API Architecture | Aplikasi menggunakan komunikasi berbasis REST API |
+| Attack Surface | API dapat digunakan untuk authorization testing dan parameter manipulation |
+| Information Disclosure | API response dapat membantu reconnaissance lanjutan |
 
 ---
 
-## Phase 6 — Post-Exploitation Analysis
+# Access Control Testing
 
-Setelah memperoleh akses terhadap functionality tertentu, attacker melakukan post-exploitation analysis untuk mengevaluasi:
+| Item | Detail |
+|---|---|
+| Evidence | ![Access Control Testing](evidence/11-access-control-testing.png) |
+| Objective | Menguji authorization validation menggunakan akun privilege rendah |
 
-* Session persistence
-* Token handling
-* Sensitive information exposure
-* API response analysis
+### Access Control Analysis
 
-Tahap ini bertujuan mengidentifikasi dampak lebih lanjut apabila vulnerability berhasil dieksploitasi pada production environment.
+| Finding | Analysis |
+|---|---|
+| Administrative Route Exposure | Route administratif tetap dapat dijangkau melalui frontend |
+| Backend Communication | Endpoint administratif tetap melakukan backend request |
+| Security Risk | Administrative endpoint menjadi high-value attack surface |
+
+---
+
+# Application-Level Privilege Escalation Testing
+
+| Item | Detail |
+|---|---|
+| Evidence | ![Privilege Escalation Testing](evidence/12-privilege-escalation-testing.png) |
+| Objective | Menguji kemungkinan privilege escalation pada level aplikasi |
+
+### Privilege Escalation Analysis
+
+| Finding | Analysis |
+|---|---|
+| Authorization Testing | Pengujian dilakukan terhadap endpoint administratif |
+| Administrative Exposure | Endpoint administratif tetap dapat diakses pada frontend |
+| Security Risk | Weak authorization validation dapat meningkatkan risiko privilege escalation |
 
 ---
 
 # Visual Attack Surface
 
-## High-Level Architecture
-
-```text id="9j0r56"
+```text
                     +----------------------+
                     |     External User    |
                     |      / Attacker      |
@@ -437,177 +323,98 @@ Tahap ini bertujuan mengidentifikasi dampak lebih lanjut apabila vulnerability b
 +---------------+ +---------------+ +---------------+ +----------------+
 ```
 
+### Attack Surface Analysis
+
+| Attack Surface | Description |
+|---|---|
+| REST API | Digunakan untuk komunikasi backend |
+| Authentication & Session | Menangani login dan session management |
+| Administrative Endpoint | Menjadi target authorization testing |
+| Public File Access | Potensi information disclosure |
+
 ---
 
-# Attack Chain Visualization
+# Post-Exploitation Analysis
 
-```text id="8yqh8l"
-Reconnaissance
-      |
-      v
-Service Enumeration
-      |
-      v
-Technology Fingerprinting
-      |
-      v
-Directory Enumeration
-      |
-      v
-REST/API Discovery
-      |
-      v
-Administrative Endpoint Discovery
-      |
-      v
-Authorization Testing
-      |
-      v
-Privilege Escalation
-      |
-      v
-Sensitive Function Access
-      |
-      v
-Post-Exploitation Analysis
-```
+### Post-Exploitation Findings
+
+| Finding | Analysis |
+|---|---|
+| Session Storage | Authentication token tersimpan pada browser |
+| API Response | REST API digunakan untuk authentication dan functionality aplikasi |
+| Administrative Endpoint | Endpoint administratif tetap aktif pada backend communication |
+| Security Impact | Potensi unauthorized access dan privilege escalation |
+
+### Potential Security Impact
+
+| Risk | Impact |
+|---|---|
+| Unauthorized Administrative Access | Access terhadap privileged functionality |
+| Sensitive Information Exposure | Exposure terhadap informasi internal |
+| Session Abuse | Session replay atau hijacking |
+| Privilege Escalation | Unauthorized functionality access |
 
 ---
 
 # Vulnerability Assessment
 
-| Vulnerability | Severity | OWASP Mapping | Endpoint / Area | Description | Potential Impact |
-|---|---|---|---|---|---|
-| Broken Access Control | High | A01 Broken Access Control | `/restricted`, `/administration`, `/profile` | Authorization validation berpotensi tidak diterapkan secara konsisten pada backend sehingga memungkinkan unauthorized functionality access. | Privilege escalation, unauthorized admin access, data manipulation |
-| Information Disclosure | Medium | A05 Security Misconfiguration, A02 Cryptographic Failures | `/ftp`, `/robots.txt`, `/assets`, `/media` | Public endpoint dan static directory dapat memberikan informasi internal aplikasi yang membantu reconnaissance lanjutan. | Sensitive information exposure, attack surface disclosure |
-| REST API Exposure | Medium | A05 Security Misconfiguration | `/api`, `/rest` | REST API endpoint dapat diakses dan menghasilkan backend response yang menunjukkan API-driven architecture. | API abuse, unauthorized API interaction, backend enumeration |
-| Session Handling Weakness | Medium | A07 Identification and Authentication Failures | Authentication & Session | Session/token handling dianalisis melalui Browser Developer Tools dan request inspection. Weak session management dapat meningkatkan risiko session abuse. | Session hijacking, session replay, account takeover |
-| Potential Authorization Weakness | High | A01 Broken Access Control | API & Restricted Endpoint | Endpoint tertentu menunjukkan kemungkinan perlunya pengujian authorization lebih lanjut pada backend. | Unauthorized resource access, privilege escalation |
-| Potential Redirect Handling Issue | Low | A01 Broken Access Control | `/redirect` | Endpoint redirect teridentifikasi dan perlu dianalisis lebih lanjut untuk memastikan tidak terdapat open redirect issue. | Redirect abuse, phishing facilitation |
-| Static File Exposure | Medium | A05 Security Misconfiguration | `/assets`, `/media`, `/video` | Static file dan media endpoint dapat membantu attacker memahami struktur frontend maupun route aplikasi. | Frontend reconnaissance, endpoint discovery |
-| Backend Error Exposure | Low | A05 Security Misconfiguration | `/api`, `/rest`, `/profile`, `/restricted` | Beberapa endpoint menghasilkan `HTTP 500 Internal Server Error`, yang menunjukkan request mencapai backend namun gagal diproses. | Backend behavior disclosure, attack surface mapping |
-
-## Vulnerability Assessment Summary
-
-Hasil assessment menunjukkan bahwa attack surface utama aplikasi berada pada:
-- REST API endpoint
-- Authorization mechanism
-- Session handling
-- Public file access
-- Administrative functionality
-
-Endpoint seperti `/api`, `/rest`, `/restricted`, dan `/ftp` menjadi prioritas utama untuk pengujian lanjutan karena berpotensi berkaitan dengan authorization weakness, API exposure, dan information disclosure.
-
-Selain itu, penggunaan modern SPA architecture menyebabkan proses enumeration tradisional menghasilkan false positive karena seluruh invalid route mereturn `HTTP 200 OK`. Hal ini menunjukkan pentingnya memahami behavior aplikasi sebelum melakukan automated enumeration lebih lanjut.
+| Vulnerability | Severity | OWASP Mapping | Endpoint / Area | Potential Impact |
+|---|---|---|---|---|
+| Broken Access Control | High | A01 | `/restricted`, `/administration` | Privilege escalation |
+| Information Disclosure | Medium | A05 | `/ftp`, `/robots.txt` | Sensitive information exposure |
+| REST API Exposure | Medium | A05 | `/api`, `/rest` | API abuse |
+| Session Handling Weakness | Medium | A07 | Authentication & Session | Session hijacking |
+| Static File Exposure | Medium | A05 | `/assets`, `/media` | Frontend reconnaissance |
+| Backend Error Exposure | Low | A05 | `/api`, `/rest` | Backend behavior disclosure |
 
 ---
 
 # MITRE ATT&CK Mapping
 
-| Aktivitas            | Technique |
-| -------------------- | --------- |
-| Reconnaissance       | TA0043    |
-| Discovery            | TA0007    |
-| Privilege Escalation | TA0004    |
-| Valid Accounts       | T1078     |
-| Exploitation         | T1068     |
+| Aktivitas | Technique |
+|---|---|
+| Reconnaissance | TA0043 |
+| Discovery | TA0007 |
+| Privilege Escalation | TA0004 |
+| Valid Accounts | T1078 |
+| Exploitation | T1068 |
 
 ---
 
 # Business Impact Analysis
 
-Jika vulnerability dieksploitasi pada production environment:
-
-* External attacker dapat memperoleh akses administratif
-* Sensitive data dapat terekspos
-* API dapat disalahgunakan
-* Data manipulation dapat terjadi
-* Compliance risk meningkat
-* Reputasi organisasi dapat terdampak
-
-Broken access control merupakan salah satu risiko paling kritikal pada modern web application karena berdampak langsung terhadap confidentiality, integrity, dan availability data.
+| Risk | Business Impact |
+|---|---|
+| Unauthorized Administrative Access | Access terhadap privileged functionality |
+| Sensitive Information Exposure | Kebocoran data internal |
+| API Abuse | Penyalahgunaan backend API |
+| Data Manipulation | Perubahan data tanpa otorisasi |
+| Compliance Risk | Pelanggaran compliance/security policy |
+| Reputational Damage | Penurunan reputasi organisasi |
 
 ---
 
 # Recommendations & Remediation
 
-## Technical Recommendation
-
-### Server-Side Authorization Validation
-
-Authorization harus divalidasi pada backend untuk setiap request.
-
-### Role-Based Access Control (RBAC)
-
-Implementasikan RBAC untuk memastikan user hanya dapat mengakses functionality sesuai privilege.
-
-### Secure Session Management
-
-* Session expiration
-* Token rotation
-* Secure cookie configuration
-* Multi-factor authentication
-
-### API Security Hardening
-
-* Authorization enforcement
-* Input validation
-* Rate limiting
-* Logging & monitoring
-
----
-
-## Strategic Recommendation
-
-* Secure SDLC implementation
-* Security awareness training
-* Periodic penetration testing
-* OWASP ASVS adoption
-* Continuous security monitoring
+| Risk Area | Identified Issue | Risk Level | Recommendation |
+|---|---|---|---|
+| Broken Access Control | Endpoint administratif dapat diakses melalui frontend route | High | Implementasi RBAC dan backend authorization validation |
+| REST API Exposure | API endpoint dapat digunakan untuk enumeration | Medium | Implementasi authorization enforcement dan rate limiting |
+| Session Handling Weakness | Session/token disimpan pada sisi client | Medium | Secure cookie, token expiration, dan secure session management |
+| Information Disclosure | Public endpoint memberikan informasi tambahan | Medium | Hardening public endpoint dan file exposure |
+| Backend Error Exposure | Endpoint menghasilkan `HTTP 500` | Low | Implementasi custom error handling |
+| Static File Exposure | Static files membantu reconnaissance | Medium | Minimalkan informasi sensitif pada static file |
 
 ---
 
 # Conclusion
 
-Assessment terhadap OWASP Juice Shop berhasil menunjukkan bagaimana attacker dapat bergerak secara sistematis dari reconnaissance hingga privilege escalation melalui kombinasi:
-
-* Service enumeration
-* Endpoint discovery
-* API analysis
-* Authorization testing
-
-Assessment ini menunjukkan pentingnya:
-
-* Secure authorization validation
-* Proper session management
-* API security hardening
-* Attack surface reduction
-
-Pendekatan secure-by-design serta security testing berkala sangat penting untuk mengurangi risiko unauthorized access dan privilege escalation pada aplikasi web modern.
-
----
-
-# Repository Structure
-
-```text id="9w3mry"
-cybersecurity-portfolio/
-├── README.md
-├── evidence/
-│   ├── 01-docker-running.png
-│   ├── 02-juice-shop-homepage.png
-│   ├── 03-nmap-scan.png
-│   ├── 04-whatweb-result.png
-│   ├── 05-gobuster-result.png
-│   ├── 06-login-analysis.png
-│   ├── 07-api-testing.png
-│   ├── 08-admin-testing.png
-│   ├── 09-session-analysis.png
-│   └── 10-remediation-summary.png
-├── logs/
-│   ├── nmap.txt
-│   ├── gobuster.txt
-│   └── whatweb.txt
-└── appendix/
-    ├── mitre-mapping.md
-    └── owasp-mapping.md
-```
+| Finding | Summary |
+|---|---|
+| Reconnaissance | Service enumeration berhasil mengidentifikasi web application pada port 3000 |
+| Enumeration | Hidden endpoint dan REST API berhasil ditemukan |
+| Authentication Analysis | Aplikasi menggunakan token/session-based authentication |
+| API Testing | REST API menjadi attack surface utama |
+| Access Control Testing | Administrative endpoint menjadi high-value target |
+| Privilege Escalation Testing | Authorization validation perlu diperkuat |
+| Overall Security Posture | Modern web application membutuhkan secure authorization, API security, dan proper session management |
