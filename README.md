@@ -203,7 +203,7 @@ Directory enumeration dilakukan menggunakan Gobuster untuk mencari hidden endpoi
 ## Command
 
 ```bash id="z4gsb2"
-gobuster dir -u http://127.0.0.1:3000 -w /usr/share/wordlists/dirb/common.txt
+gobuster dir -u http://127.0.0.1:3000 -w /usr/share/wordlists/dirb/common.txt --exclude-length 9903
 ```
 
 ## Endpoint yang Ditemukan
