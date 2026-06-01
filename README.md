@@ -294,7 +294,7 @@ Privilege escalation testing dilakukan menggunakan akun privilege rendah untuk m
         v               v               v               v
 +---------------+ +---------------+ +---------------+ +----------------+
 | Authentication| | REST API      | | Admin Endpoint| | File Endpoint  |
-| & Session     | | /api /rest    | | /administration| | /ftp           |
+| & Session     | | /api /rest    | |/administration| | /ftp           |
 +---------------+ +---------------+ +---------------+ +----------------+
 
 ```
