@@ -158,14 +158,19 @@ whatweb http://127.0.0.1:3000
 
 ## Analisis
 
-Fingerprinting menunjukkan bahwa aplikasi menggunakan modern web technology stack dan REST API architecture.
+Hasil fingerprinting mengonfirmasi bahwa target merupakan aplikasi OWASP Juice Shop yang berjalan pada localhost 127.0.0.1:3000.
 
-Keberadaan REST API meningkatkan kemungkinan attacker melakukan:
+Deteksi HTML5 dan Script[module] menunjukkan bahwa aplikasi menggunakan modern JavaScript-based architecture dan kemungkinan merupakan Single Page Application (SPA). Karakteristik SPA menyebabkan seluruh invalid route tetap menghasilkan HTTP 200 OK, sehingga proses enumeration seperti Gobuster membutuhkan filtering response length untuk mengurangi false positive.
 
-* API enumeration
-* Request manipulation
-* Authorization testing
-* Information disclosure analysis
+Selain itu ditemukan beberapa security header seperti:
+
+X-Frame-Options[SAMEORIGIN] untuk membantu mengurangi risiko clickjacking.
+X-Content-Type-Options untuk mencegah MIME sniffing.
+Feature-Policy untuk membatasi fitur browser tertentu.
+
+Header access-control-allow-origin juga menunjukkan penggunaan mekanisme CORS yang perlu diperhatikan lebih lanjut pada tahap API testing karena konfigurasi yang terlalu permisif dapat meningkatkan risiko unauthorized cross-origin access.
+
+Secara keseluruhan, fingerprinting menunjukkan bahwa target merupakan modern web application dengan attack surface utama pada REST API, frontend routing, session handling, dan authorization mechanism.
 
 ---
 
