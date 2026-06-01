@@ -267,33 +267,36 @@ Privilege escalation testing dilakukan menggunakan akun privilege rendah untuk m
 
 ---
 
-# Visual Attack Surface
-
-```text
-                    +----------------------+
-                    |     External User    |
-                    |      / Attacker      |
-                    +----------+-----------+
-                               |
-                               v
-                  +-------------------------+
-                  | Browser / Burp Suite    |
-                  +-----------+-------------+
-                              |
-                              v
-                  +-------------------------+
-                  | OWASP Juice Shop        |
-                  | Docker Container        |
-                  +-----------+-------------+
-                              |
-        -------------------------------------------------
-        |               |               |               |
-        v               v               v               v
-
-+---------------+ +---------------+ +---------------+ +----------------+
-| Authentication| | REST API      | | Admin Endpoint| | File Endpoint  |
-| & Session     | | /api /rest    | | /administration| | /ftp           |
-+---------------+ +---------------+ +---------------+ +----------------+
+# Visual Attack Surface
+
+
+
+```text
+
+                    +----------------------+
+                    |     External User    |
+                    |      / Attacker      |
+                    +----------+-----------+
+                               |
+                               v
+                  +-------------------------+
+                  | Browser / Burp Suite    |
+                  +-----------+-------------+
+                              |
+                              v
+                  +-------------------------+
+                  | OWASP Juice Shop        |
+                  | Docker Container        |
+                  +-----------+-------------+
+                              |
+        -------------------------------------------------
+        |               |               |               |
+        v               v               v               v
++---------------+ +---------------+ +---------------+ +----------------+
+| Authentication| | REST API      | | Admin Endpoint| | File Endpoint  |
+| & Session     | | /api /rest    | | /administration| | /ftp           |
++---------------+ +---------------+ +---------------+ +----------------+
+
 ```
 
 ---
