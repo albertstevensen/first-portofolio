@@ -170,6 +170,7 @@ Selain itu ditemukan beberapa security header seperti:
 Header `access-control-allow-origin` juga menunjukkan penggunaan mekanisme CORS yang perlu diperhatikan lebih lanjut pada tahap API testing karena konfigurasi yang terlalu permisif dapat meningkatkan risiko unauthorized cross-origin access.
 
 Secara keseluruhan, fingerprinting menunjukkan bahwa target merupakan modern web application dengan attack surface utama pada REST API, frontend routing, session handling, dan authorization mechanism.
+
 ---
 
 # Evidence WhatWeb
