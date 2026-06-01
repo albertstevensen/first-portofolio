@@ -480,211 +480,31 @@ Post-Exploitation Analysis
 
 ## OWASP Mapping
 
-* A01 Broken Access Control
-
-## Severity
-
-High
-
-## Deskripsi
-
-Broken Access Control terjadi ketika aplikasi gagal melakukan validasi authorization secara konsisten sehingga memungkinkan user memperoleh akses terhadap resource yang seharusnya dibatasi.
-
----
-
-## Aktivitas Pengujian
-
-* Login menggunakan akun user biasa
-* Mengakses endpoint administratif
-* Authorization testing
-* API request analysis
-
----
-
-## Dampak
-
-Jika dieksploitasi pada production environment:
-
-* Unauthorized administrative access
-* Privilege escalation
-* Sensitive functionality abuse
-* Data manipulation
-
----
-
-# Information Disclosure
-
-## OWASP Mapping
-
-* A05 Security Misconfiguration
-* A02 Cryptographic Failures
-
-## Severity
-
-Medium
-
-## Deskripsi
-
-Public endpoint memberikan informasi internal aplikasi yang dapat membantu attacker melakukan reconnaissance lebih lanjut.
-
----
-
-## Endpoint
-
-```text id="2m95qq"
-/api
-/rest
-/ftp
-```
-
----
-
-## Dampak
-
-* Internal information leakage
-* API discovery
-* Increased attack surface visibility
-
----
-
-# Session Handling Weakness
-
-## OWASP Mapping
-
-* A07 Identification and Authentication Failures
-
-## Severity
-
-Medium
-
-## Deskripsi
-
-Session token dan authentication mechanism dianalisis menggunakan Browser Developer Tools dan request inspection.
-
-Weak session management dapat meningkatkan risiko:
-
-* Session hijacking
-* Session replay
-* Unauthorized persistent access
-
----
-
-# Exploitation Phase
-
-# Authentication Testing
-
-Authentication testing dilakukan dengan:
-
-* Login menggunakan akun valid
-* Mengamati login request
-* Menganalisis token dan session behavior
-
-## Tools
-
-* Browser Developer Tools
-* Burp Suite
-
----
-
-# API Testing
-
-API request dianalisis menggunakan:
-
-* Request interception
-* Parameter manipulation
-* Response inspection
-
-## Analisis
-
-REST API memberikan informasi mengenai:
-
-* Application structure
-* Backend communication
-* Authorization handling
-
----
-
-# Access Control Testing
-
-Administrative endpoint diuji menggunakan akun dengan privilege rendah untuk mengevaluasi authorization enforcement.
-
-## Analisis
-
-Broken access control merupakan salah satu vulnerability paling kritikal pada aplikasi web modern karena attacker dapat memperoleh privileged functionality tanpa perlu mengeksploitasi operating system.
-
----
-
-# Post-Exploitation Analysis
-
-# Session Analysis
-
-Session token dianalisis untuk mengidentifikasi:
-
-* Session persistence
-* Authorization information
-* Token handling behavior
-
-## Dampak
-
-Jika session management tidak aman:
-
-* Account takeover
-* Session replay attack
-* Unauthorized persistent access
-
----
-
-# Application-Level Privilege Escalation
-
-Privilege escalation pada assessment ini berfokus pada:
-
-* Role escalation
-* Administrative functionality access
-* Unauthorized resource access
-
-## Vertical Privilege Escalation
-
-```text id="7dnf9d"
-User → Admin
-```
-
-## Horizontal Privilege Escalation
-
-```text id="5tt7wp"
-User A → User B Resource Access
-```
-
-## Analisis
-
-Authorization weakness dapat memungkinkan attacker:
-
-* Mengakses administrative endpoint
-* Mengakses resource user lain
-* Melakukan unauthorized functionality access
-
----
-
-# Sensitive Data Exposure
-
-API response dan endpoint publik dianalisis untuk mengidentifikasi kemungkinan sensitive information exposure.
-
-## Dampak
-
-* Internal information leakage
-* Increased reconnaissance capability
-* Privacy exposure
-
----
-
-# Persistence Discussion
-
-Persistence terhadap host operating system tidak dilakukan karena scope pengujian hanya aplikasi web dalam environment lab.
-
-Namun persistence secara konseptual pada web application dapat berupa:
-
-* Session reuse
-* Weak logout mechanism
-* Persistent authentication token
+# Vulnerability Assessment
+
+| Vulnerability | Severity | OWASP Mapping | Endpoint / Area | Description | Potential Impact |
+|---|---|---|---|---|---|
+| Broken Access Control | High | A01 Broken Access Control | `/restricted`, `/administration`, `/profile` | Authorization validation berpotensi tidak diterapkan secara konsisten pada backend sehingga memungkinkan unauthorized functionality access. | Privilege escalation, unauthorized admin access, data manipulation |
+| Information Disclosure | Medium | A05 Security Misconfiguration, A02 Cryptographic Failures | `/ftp`, `/robots.txt`, `/assets`, `/media` | Public endpoint dan static directory dapat memberikan informasi internal aplikasi yang membantu reconnaissance lanjutan. | Sensitive information exposure, attack surface disclosure |
+| REST API Exposure | Medium | A05 Security Misconfiguration | `/api`, `/rest` | REST API endpoint dapat diakses dan menghasilkan backend response yang menunjukkan API-driven architecture. | API abuse, unauthorized API interaction, backend enumeration |
+| Session Handling Weakness | Medium | A07 Identification and Authentication Failures | Authentication & Session | Session/token handling dianalisis melalui Browser Developer Tools dan request inspection. Weak session management dapat meningkatkan risiko session abuse. | Session hijacking, session replay, account takeover |
+| Potential Authorization Weakness | High | A01 Broken Access Control | API & Restricted Endpoint | Endpoint tertentu menunjukkan kemungkinan perlunya pengujian authorization lebih lanjut pada backend. | Unauthorized resource access, privilege escalation |
+| Potential Redirect Handling Issue | Low | A01 Broken Access Control | `/redirect` | Endpoint redirect teridentifikasi dan perlu dianalisis lebih lanjut untuk memastikan tidak terdapat open redirect issue. | Redirect abuse, phishing facilitation |
+| Static File Exposure | Medium | A05 Security Misconfiguration | `/assets`, `/media`, `/video` | Static file dan media endpoint dapat membantu attacker memahami struktur frontend maupun route aplikasi. | Frontend reconnaissance, endpoint discovery |
+| Backend Error Exposure | Low | A05 Security Misconfiguration | `/api`, `/rest`, `/profile`, `/restricted` | Beberapa endpoint menghasilkan `HTTP 500 Internal Server Error`, yang menunjukkan request mencapai backend namun gagal diproses. | Backend behavior disclosure, attack surface mapping |
+
+## Vulnerability Assessment Summary
+
+Hasil assessment menunjukkan bahwa attack surface utama aplikasi berada pada:
+- REST API endpoint
+- Authorization mechanism
+- Session handling
+- Public file access
+- Administrative functionality
+
+Endpoint seperti `/api`, `/rest`, `/restricted`, dan `/ftp` menjadi prioritas utama untuk pengujian lanjutan karena berpotensi berkaitan dengan authorization weakness, API exposure, dan information disclosure.
+
+Selain itu, penggunaan modern SPA architecture menyebabkan proses enumeration tradisional menghasilkan false positive karena seluruh invalid route mereturn `HTTP 200 OK`. Hal ini menunjukkan pentingnya memahami behavior aplikasi sebelum melakukan automated enumeration lebih lanjut.
 
 ---
 
