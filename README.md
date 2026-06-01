@@ -41,6 +41,7 @@ Project ini dilakukan pada environment lab terisolasi menggunakan OWASP Juice Sh
 
 # Repository Structure
 
+```text
 cybersecurity-portfolio/
 │
 ├── README.md
@@ -70,7 +71,8 @@ cybersecurity-portfolio/
     ├── mitre-mapping.md
     ├── owasp-mapping.md
     ├── attack-storyline.md
-    └── attack-surface-analysis.md
+    └── attack-surface-analysis.md
+```
     
 ---
 
